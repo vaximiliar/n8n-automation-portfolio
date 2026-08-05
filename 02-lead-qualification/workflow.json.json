@@ -1,0 +1,236 @@
+{
+  "name": "Lead Qualification System",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "Новая форма (Ответы)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ed43ace1-a26b-4648-8d06-bee760fbec29",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "gHoGJZb5h9GH8nC0",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n\n  const message = (item.json.message || \"\").toLowerCase();\n\n  let priority = \"Cold\";\n  let reason = \"No high-priority keywords found.\";\n\n  if (\n    message.includes(\"urgent\") ||\n    message.includes(\"asap\") ||\n    message.includes(\"immediately\") ||\n    message.includes(\"today\") ||\n    message.includes(\"budget\") ||\n    message.includes(\"ready\")\n  ) {\n    priority = \"Hot\";\n    reason = \"Urgent request or buying intent detected.\";\n  } else if (\n    message.includes(\"automation\") ||\n    message.includes(\"quote\") ||\n    message.includes(\"interested\") ||\n    message.includes(\"help\") ||\n    message.includes(\"project\")\n  ) {\n    priority = \"Warm\";\n    reason = \"Potential customer showed interest.\";\n  }\n\n  item.json.priority = priority;\n  item.json.reason = reason;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "753b5e77-4614-4453-8554-0f4c05f7b836",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "work",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.email }}",
+            "Priority": "={{ $json.priority }}",
+            "Qualification reason": "={{ $json.reason }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "Отметка времени",
+              "displayName": "Отметка времени",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Qualification reason",
+              "displayName": "Qualification reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1a08f6e9-ca62-415f-b995-f52e1d520e42",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tRPfS4xK8FdIO5De",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5cc2ef9a-80df-40cd-b2f6-f2206b8b44f6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7b256dc525d6c437dae3e26cd5aec6d5e60ceb43b0d8457cbea546a6b34fbd34"
+  },
+  "nodeGroups": [],
+  "id": "ZbUQO3WzbQ8v5evz",
+  "tags": []
+}

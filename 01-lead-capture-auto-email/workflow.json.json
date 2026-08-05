@@ -1,0 +1,262 @@
+{
+  "name": "Lead Capture & Auto Email System",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "Новая форма (Ответы)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2820bf59-15ab-4bf4-b101-1ae890a5310e",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "gHoGJZb5h9GH8nC0",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "We've received your request",
+        "emailType": "text",
+        "message": "=Hi {{ $json.name }},\n\nThank you for contacting BrightGrowth Marketing.\n\nWe've received your request and a member of our team will contact you shortly.\n\nBest regards,\nBrightGrowth Marketing",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c8559b3d-23d8-4e49-a5e4-921b87cb573e",
+      "name": "Send a message",
+      "webhookId": "091844e8-fc7e-4540-8c9f-73994c8937d8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "popapopav042@gmail.com",
+        "subject": "🔔 New Lead Received",
+        "emailType": "text",
+        "message": "=A new lead has been received.\n\nName:{{ $('Google Sheets Trigger').item.json.name }}\nEmail:{{ $('Google Sheets Trigger').item.json.email }}\nCompany:{{ $('Google Sheets Trigger').item.json.company }}\nMessage:{{ $('Google Sheets Trigger').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "681cc707-9004-4b72-9a91-2d64c74c8774",
+      "name": "Send a message1",
+      "webhookId": "471ba1dd-6f9e-4fed-b5b8-fc325cc91821",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "Новая форма (Ответы)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Google Sheets Trigger').item.json.email }}",
+            "status": "=Sent"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "Отметка времени",
+              "displayName": "Отметка времени",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "1c052eba-aedb-427c-a6c1-19f420af7f1d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tRPfS4xK8FdIO5De",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "44c92eb1-9058-4b77-8078-68dd4e107e21",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7b256dc525d6c437dae3e26cd5aec6d5e60ceb43b0d8457cbea546a6b34fbd34"
+  },
+  "nodeGroups": [],
+  "id": "oGsFEOqF78DZk7TP",
+  "tags": []
+}

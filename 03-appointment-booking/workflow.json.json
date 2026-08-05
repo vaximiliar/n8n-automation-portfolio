@@ -1,0 +1,318 @@
+{
+  "name": "Appointment Booking Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "Новая форма (Ответы)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2aa6f046-ff8f-4a0a-8771-9e8dd1eeace7",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "gHoGJZb5h9GH8nC0",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "popapopav042@gmail.com",
+          "mode": "list",
+          "cachedResultName": "popapopav042@gmail.com"
+        },
+        "start": "={{ DateTime.fromFormat($json[\"Meeting date\"] + \" \" + $json[\"Meeting time\"], \"dd.MM.yyyy HH:mm:ss\", { zone: \"America/New_York\" }).toISO() }}",
+        "end": "={{ DateTime.fromFormat($json[\"Meeting date\"] + \" \" + $json[\"Meeting time\"], \"dd.MM.yyyy HH:mm:ss\", { zone: \"America/New_York\" }).plus({ hours: 1 }).toISO() }}",
+        "additionalFields": {
+          "description": "=Client: {{ $json.name }} Email: {{ $json.email }} Company: {{ $json.company }}  Message: {{ $json.message }}",
+          "summary": "=Meeting with {{ $json.name }} — {{ $json.company }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1d3e533d-8164-4d5e-92c0-594d61a45705",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "DqsHmOaMkGqXUvzB",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.email }}",
+        "subject": "Your meeting has been booked!",
+        "emailType": "text",
+        "message": "=Hi {{ $('Google Sheets Trigger').item.json.name }},  Your meeting has been successfully scheduled.  Date:{{ $('Google Sheets Trigger').item.json['Meeting date'] }}  Time: {{ $('Google Sheets Trigger').item.json['Meeting time'] }}  We look forward to speaking with you!  Best regards, BrightGrowth Marketing",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "37f5e9bf-925d-47d0-82f8-9d093f357c03",
+      "name": "Send a message",
+      "webhookId": "fc48c462-6e62-4c08-a9a5-c5c59cf16a58",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "work",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Google Sheets Trigger').item.json.email }}",
+            "Booking status": "booked"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "Отметка времени",
+              "displayName": "Отметка времени",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Meeting date",
+              "displayName": "Meeting date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Meeting time",
+              "displayName": "Meeting time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Qualification reason",
+              "displayName": "Qualification reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Booking status",
+              "displayName": "Booking status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "d3658e51-4938-4086-b524-e074829c7446",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tRPfS4xK8FdIO5De",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "69859bab-e34b-4756-b692-b9c80989d6f5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7b256dc525d6c437dae3e26cd5aec6d5e60ceb43b0d8457cbea546a6b34fbd34"
+  },
+  "nodeGroups": [],
+  "id": "c586jSljHR1HGidM",
+  "tags": []
+}

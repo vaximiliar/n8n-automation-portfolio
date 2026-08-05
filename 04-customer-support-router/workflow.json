@@ -1,0 +1,516 @@
+{
+  "name": "Customer Support Ticket Router",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "Новая форма (Ответы)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c6e99b31-5a9e-4bc0-a759-da50fab59b1f",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "gHoGJZb5h9GH8nC0",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "=Sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "52f7ed33-c27b-4baa-8e26-7d400249ccc6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sales"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f130f85a-76f8-412e-9578-653965423ec1",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Support"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e65b051d-70d9-42a1-a354-eb2d1a846d28",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Billing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Billing"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bbad7965-201e-4d78-aed3-1c2ed1647b73",
+                    "leftValue": "={{ $json.Department }}",
+                    "rightValue": "Other",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fc484bbb-02e9-43eb-b99f-6e4898c3596a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.email }}",
+        "subject": "New Sales Request",
+        "emailType": "text",
+        "message": "=New request received.  Name: {{ $('Google Sheets Trigger').item.json.name }} Email: {{ $('Google Sheets Trigger').item.json.email }} Department: {{ $('Google Sheets Trigger').item.json.Department }}  Message: {{ $('Google Sheets Trigger').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        -208
+      ],
+      "id": "f86dee2b-fb92-4421-bcaf-1e6aa4166943",
+      "name": "Send a message",
+      "webhookId": "57d0998f-f906-42c1-8d9b-b4d5a8e437de",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.email }}",
+        "subject": "New Support Ticket",
+        "emailType": "text",
+        "message": "=New request received.\n\nName: {{ $('Google Sheets Trigger').item.json.name }}\nEmail: {{ $('Google Sheets Trigger').item.json.email }}\nDepartment: {{ $('Google Sheets Trigger').item.json.Department }}\n\nMessage:\n{{ $('Google Sheets Trigger').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "e3398f97-d434-4439-9c64-ba37ea303c0a",
+      "name": "Send a message1",
+      "webhookId": "4fc17c81-f4f3-4a0d-8764-e1b090c14666",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.email }}",
+        "subject": "New Billing Request",
+        "emailType": "text",
+        "message": "=New request received.  Name: {{ $('Google Sheets Trigger').item.json.name }} Email: {{ $('Google Sheets Trigger').item.json.email }} Department: {{ $('Google Sheets Trigger').item.json.Department }}  Message: {{ $('Google Sheets Trigger').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        96
+      ],
+      "id": "0e3c5e80-49d9-4c53-a7ad-c7fa83851510",
+      "name": "Send a message2",
+      "webhookId": "2f486314-7ee2-4c47-8614-95aa2a1f7e92",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.email }}",
+        "subject": "New General Inquiry",
+        "emailType": "text",
+        "message": "=New request received.  Name: {{ $('Google Sheets Trigger').item.json.name }} Email: {{ $('Google Sheets Trigger').item.json.email }} Department: {{ $('Google Sheets Trigger').item.json.Department }}  Message:{{ $('Google Sheets Trigger').item.json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        208
+      ],
+      "id": "d6acf753-c774-426e-803f-c2fe3014d03a",
+      "name": "Send a message3",
+      "webhookId": "de24ac76-c13d-41ff-9c61-a6187ccc08ce",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "q3sE99vXo5LXWtK2",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY",
+          "mode": "list",
+          "cachedResultName": "work",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1549967088,
+          "mode": "list",
+          "cachedResultName": "Ответы на форму (1)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1b9KCzfPbqXDJKJzDomgRRat0IiOkNhQ9UB48QL5x_zY/edit#gid=1549967088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Google Sheets Trigger').item.json.email }}",
+            "status": "Routed",
+            "Processed Department": "={{ $('Google Sheets Trigger').item.json.Department }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "Отметка времени",
+              "displayName": "Отметка времени",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Meeting date",
+              "displayName": "Meeting date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "  Meeting time  ",
+              "displayName": "  Meeting time  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Qualification reason",
+              "displayName": "Qualification reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Booking status",
+              "displayName": "Booking status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Processed Department",
+              "displayName": "Processed Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        -208
+      ],
+      "id": "1978f6f2-77be-4d2a-8602-3ba2071827cd",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tRPfS4xK8FdIO5De",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f1c1bf4d-c30f-4c89-bfc3-9f9039f4c266",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7b256dc525d6c437dae3e26cd5aec6d5e60ceb43b0d8457cbea546a6b34fbd34"
+  },
+  "nodeGroups": [],
+  "id": "weMAKM0Wi5D1Cdgo",
+  "tags": []
+}
